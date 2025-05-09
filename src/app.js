@@ -5,6 +5,9 @@ import rutasUsuarios from './routes/usuarios.routes.js';
 import rutasProductos from './routes/productos.routes.js';
 import rutasCategorias from './routes/categoria.routes.js';
 import rutasVentas from './routes/ventas.routes.js';
+import rutasEmpleados from './routes/empleado.routes.js';
+import rutasDetalle_ventas from './routes/detalle_ventas.routes.js';
+
 
 const app = express();
 
@@ -21,6 +24,8 @@ app.use('/api', rutasUsuarios);
 app.use('/api', rutasProductos);
 app.use('/api', rutasCategorias);
 app.use('/api', rutasVentas);
+app.use('/api', rutasEmpleados);
+app.use('/api', rutasDetalle_ventas);
 
 
 

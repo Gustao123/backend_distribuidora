@@ -30,3 +30,72 @@ export const obtenerCliente = async (req, res) => {
     });
   }
 };
+
+
+// Registrar una nueva cliente
+export const registrarClientes = async (req, res) => {
+  try {
+    const { primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, celular, direccion, cedula } = req.body;
+
+    const [result] = await pool.query(
+      'INSERT INTO Clientes ( primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, celular, direccion, cedula) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [ primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, celular, direccion, cedula]
+    );
+
+    res.status(201).json({ id_cliente: result.insertId });
+  } catch (error) {
+    return res.status(500).json({
+      mensaje: 'Ha ocurrido un error al registrar la clientes.',
+      error: error
+    });
+  }
+};
+
+
+export const eliminarClientes = async (req, res) => {
+  try {
+    const [result] = await pool.query('DELETE FROM clientes WHERE id_cliente = ?', [req.params.id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        mensaje: `Error al eliminar la cliente. El ID ${req.params.id} no fue encontrado.`
+      });
+    }
+
+    res.status(204).send(); // Respuesta sin contenido para indicar éxito
+  } catch (error) {
+    return res.status(500).json({
+      mensaje: 'Ha ocurrido un error al eliminar la cliente.',
+      error: error
+    });
+  }
+};
+
+
+
+
+// Actualizar una cliente por su ID (parcial o completa)
+export const actualizarClientes = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const datos = req.body;
+
+    const [resultado] = await pool.query(
+      'UPDATE clientes SET ? WHERE id_cliente = ?',
+      [datos, id]
+    );
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({
+        mensaje: `La cliente con ID ${id} no existe.`,
+      });
+    }
+
+    res.status(204).send(); // Respuesta sin contenido para indicar éxito
+  } catch (error) {
+    return res.status(500).json({
+      mensaje: 'Error al actualizar la cliente.',
+      error: error,
+    });
+  }
+};
