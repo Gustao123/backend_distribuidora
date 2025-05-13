@@ -7,6 +7,9 @@ import rutasCategorias from './routes/categoria.routes.js';
 import rutasVentas from './routes/ventas.routes.js';
 import rutasEmpleados from './routes/empleado.routes.js';
 import rutasDetalle_ventas from './routes/detalle_ventas.routes.js';
+import rutasDetallesCompras from './routes/detalles_compras.routes.js';
+import rutasCompras from './routes/compras.routes.js';
+
 
 
 const app = express();
@@ -26,6 +29,10 @@ app.use('/api', rutasCategorias);
 app.use('/api', rutasVentas);
 app.use('/api', rutasEmpleados);
 app.use('/api', rutasDetalle_ventas);
+app.use('/api', rutasDetallesCompras);
+app.use('/api', rutasCompras);
+app.use(express.json({ limit: '10mb' })); // Aumenta a 10 MB
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 
 
