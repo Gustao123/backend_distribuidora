@@ -99,28 +99,66 @@ export const eliminarProductos = async (req, res) => {
 
 
 
-// Actualizar una cliente por su ID (parcial o completa)
+// Actualizar un producto
 export const actualizarProducto = async (req, res) => {
   try {
     const { id } = req.params;
-    const datos = req.body;
+    const { 
+      nombre_producto, 
+      descripcion_producto, 
+      id_categoria, 
+      precio_unitario, 
+      stock, 
+      imagen 
+    } = req.body;
 
-    const [resultado] = await pool.query(
-      'UPDATE Productos SET ? WHERE id_producto = ?',
-      [datos, id]
-    );
-
-    if (resultado.affectedRows === 0) {
-      return res.status(404).json({
-        mensaje: `el producto con ID ${id} no existe.`,
+    // Validación básica de campos requeridos
+    if (!nombre_producto || !id_categoria || !precio_unitario || !stock) {
+      return res.status(400).json({
+        mensaje: 'Faltan campos requeridos: nombre, categoría, precio o stock.'
       });
     }
 
-    res.status(204).send(); // Respuesta sin contenido para indicar éxito
+    // Validar formato de imagen Base64 si se proporciona
+    if (imagen && !imagen.match(/^[A-Za-z0-9+/=]+$/)) {
+      return res.status(400).json({
+        mensaje: 'El formato de la imagen no es válido (debe ser Base64).'
+      });
+    }
+
+    const [result] = await pool.query(
+      `UPDATE productos 
+       SET nombre_producto = ?, 
+           descripcion_producto = ?, 
+           id_categoria = ?, 
+           precio_unitario = ?, 
+           stock = ?, 
+           imagen = COALESCE(?, imagen)
+       WHERE id_producto = ?`,
+      [
+        nombre_producto,
+        descripcion_producto || null,
+        id_categoria,
+        precio_unitario,
+        stock,
+        imagen,
+        id
+      ]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        mensaje: `No se encontró el producto con ID ${id}`
+      });
+    }
+
+    res.json({
+      mensaje: 'Producto actualizado exitosamente'
+    });
   } catch (error) {
     return res.status(500).json({
-      mensaje: 'Error al actualizar el producto.',
-      error: error,
+      mensaje: 'Ha ocurrido un error al actualizar el producto.',
+      error: error.message
     });
   }
 };

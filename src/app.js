@@ -16,6 +16,9 @@ import rutasIA from './routes/ia.routes.js';
 
 const app = express();
 
+app.use(express.json({ limit: '10mb' })); // Aumenta a 10 MB
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
 // Habilitar CORS para cualquier origen
 app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
@@ -34,8 +37,6 @@ app.use('/api', rutasDetalle_ventas);
 app.use('/api', rutasDetallesCompras);
 app.use('/api', rutasCompras);
 app.use('/api', rutasEstadisticas);
-app.use(express.json({ limit: '10mb' })); // Aumenta a 10 MB
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use('/ia', rutasIA);
 
 
